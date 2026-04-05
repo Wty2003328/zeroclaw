@@ -42,7 +42,7 @@ export interface ThemeContextValue {
 
 export const ThemeContext = createContext<ThemeContextValue>({
   theme: 'dark',
-  accent: 'cyan',
+  accent: 'blue',
   colorTheme: 'default-dark',
   uiFont: 'system',
   monoFont: 'jetbrains',
@@ -113,7 +113,7 @@ interface StoredTheme {
 
 const DEFAULTS: StoredTheme = {
   theme: 'dark',
-  accent: 'cyan',
+  accent: 'blue',
   colorTheme: 'default-dark',
   uiFont: 'system',
   monoFont: 'jetbrains',
