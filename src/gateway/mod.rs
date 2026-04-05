@@ -372,6 +372,8 @@ pub struct AppState {
     pub pending_pairings: Option<Arc<api_pairing::PairingStore>>,
     /// Shared canvas store for Live Canvas (A2UI) system
     pub canvas_store: CanvasStore,
+    /// Pulse personal intelligence dashboard (optional)
+    pub pulse: Option<Arc<crate::pulse::PulseState>>,
     /// WebAuthn state for hardware key authentication (optional, requires `webauthn` feature)
     #[cfg(feature = "webauthn")]
     pub webauthn: Option<Arc<api_webauthn::WebAuthnState>>,
@@ -891,6 +893,16 @@ pub async fn run_gateway(
         } else {
             None
         },
+        pulse: match crate::pulse::init(config.workspace_dir.to_str().unwrap_or(".")).await {
+            Ok(ps) => {
+                tracing::info!("Pulse dashboard initialized");
+                Some(Arc::new(ps))
+            }
+            Err(e) => {
+                tracing::warn!("Pulse dashboard failed to initialize: {}", e);
+                None
+            }
+        },
     };
 
     // Config PUT needs larger body limit (1MB)
@@ -1013,6 +1025,16 @@ pub async fn run_gateway(
         "/api/plugins",
         get(api_plugins::plugin_routes::list_plugins),
     );
+
+    // ── Pulse Dashboard API (optional) ──
+    let inner = if let Some(ref pulse_state) = state.pulse {
+        inner.nest(
+            "/api/pulse",
+            crate::pulse::routes().with_state(pulse_state.as_ref().clone()),
+        )
+    } else {
+        inner
+    };
 
     let inner = inner
         // ── SSE event stream ──
@@ -2360,6 +2382,7 @@ mod tests {
             device_registry: None,
             pending_pairings: None,
             canvas_store: CanvasStore::new(),
+            pulse: None,
             #[cfg(feature = "webauthn")]
             webauthn: None,
         };
@@ -2431,6 +2454,7 @@ mod tests {
             device_registry: None,
             pending_pairings: None,
             canvas_store: CanvasStore::new(),
+            pulse: None,
             #[cfg(feature = "webauthn")]
             webauthn: None,
         };
@@ -2826,6 +2850,7 @@ mod tests {
             device_registry: None,
             pending_pairings: None,
             canvas_store: CanvasStore::new(),
+            pulse: None,
             #[cfg(feature = "webauthn")]
             webauthn: None,
         };
@@ -2905,6 +2930,7 @@ mod tests {
             device_registry: None,
             pending_pairings: None,
             canvas_store: CanvasStore::new(),
+            pulse: None,
             #[cfg(feature = "webauthn")]
             webauthn: None,
         };
@@ -2996,6 +3022,7 @@ mod tests {
             device_registry: None,
             pending_pairings: None,
             canvas_store: CanvasStore::new(),
+            pulse: None,
             #[cfg(feature = "webauthn")]
             webauthn: None,
         };
@@ -3059,6 +3086,7 @@ mod tests {
             device_registry: None,
             pending_pairings: None,
             canvas_store: CanvasStore::new(),
+            pulse: None,
             #[cfg(feature = "webauthn")]
             webauthn: None,
         };
@@ -3127,6 +3155,7 @@ mod tests {
             device_registry: None,
             pending_pairings: None,
             canvas_store: CanvasStore::new(),
+            pulse: None,
             #[cfg(feature = "webauthn")]
             webauthn: None,
         };
@@ -3200,6 +3229,7 @@ mod tests {
             device_registry: None,
             pending_pairings: None,
             canvas_store: CanvasStore::new(),
+            pulse: None,
             #[cfg(feature = "webauthn")]
             webauthn: None,
         };
@@ -3270,6 +3300,7 @@ mod tests {
             device_registry: None,
             pending_pairings: None,
             canvas_store: CanvasStore::new(),
+            pulse: None,
             #[cfg(feature = "webauthn")]
             webauthn: None,
         };

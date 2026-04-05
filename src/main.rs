@@ -102,6 +102,8 @@ mod peripherals;
 #[cfg(feature = "plugins-wasm")]
 mod plugins;
 mod providers;
+#[path = "pulse/mod.rs"]
+mod pulse;
 mod runtime;
 mod security;
 mod service;
