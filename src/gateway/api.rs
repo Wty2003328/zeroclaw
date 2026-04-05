@@ -767,18 +767,49 @@ pub async fn handle_api_cost(
     }
 }
 
-/// GET /api/cli-tools — discovered CLI tools
+/// GET /api/cli-tools — discovered CLI tools (cached for 5 minutes)
 pub async fn handle_api_cli_tools(
     State(state): State<AppState>,
     headers: HeaderMap,
 ) -> impl IntoResponse {
+    use std::sync::Mutex;
+    use std::sync::OnceLock;
+
     if let Err(e) = require_auth(&state, &headers) {
         return e.into_response();
     }
 
-    let tools = crate::tools::cli_discovery::discover_cli_tools(&[], &[]);
+    // Cache cli-tools result — filesystem scanning is expensive (especially on WSL2)
+    static CACHE: OnceLock<Mutex<(std::time::Instant, serde_json::Value)>> = OnceLock::new();
+    let cache = CACHE.get_or_init(|| {
+        Mutex::new((
+            std::time::Instant::now() - std::time::Duration::from_secs(600),
+            serde_json::json!({"cli_tools": []}),
+        ))
+    });
 
-    Json(serde_json::json!({"cli_tools": tools})).into_response()
+    let ttl = std::time::Duration::from_secs(300); // 5 minute cache
+    {
+        let guard = cache.lock().unwrap();
+        if guard.0.elapsed() < ttl {
+            return Json(guard.1.clone()).into_response();
+        }
+    }
+
+    // Cache expired — refresh in background to avoid blocking
+    let result = tokio::task::spawn_blocking(|| {
+        let tools = crate::tools::cli_discovery::discover_cli_tools(&[], &[]);
+        serde_json::json!({"cli_tools": tools})
+    })
+    .await
+    .unwrap_or_else(|_| serde_json::json!({"cli_tools": []}));
+
+    {
+        let mut guard = cache.lock().unwrap();
+        *guard = (std::time::Instant::now(), result.clone());
+    }
+
+    Json(result).into_response()
 }
 
 /// GET /api/health — component health snapshot
