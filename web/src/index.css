@@ -771,3 +771,13 @@ code, kbd, pre {
   --color-warning: var(--color-status-warning, #fbbf24);
   color: var(--pc-text-primary);
 }
+
+/* Remove default browser focus outlines — ZeroClaw uses custom focus states */
+button:focus, a:focus, [role="button"]:focus, input:focus, select:focus, textarea:focus {
+  outline: none;
+}
+button:focus-visible, a:focus-visible {
+  outline: 1px solid var(--pc-accent-dim, rgba(34,211,238,0.3));
+  outline-offset: 1px;
+  border-radius: 8px;
+}

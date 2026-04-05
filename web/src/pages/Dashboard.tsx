@@ -828,7 +828,7 @@ export default function Dashboard() {
           <button
             key={id}
             onClick={() => setActiveTab(id)}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all"
+            className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all outline-none focus:outline-none"
             style={
               activeTab === id
                 ? {

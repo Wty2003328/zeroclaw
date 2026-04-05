@@ -327,9 +327,24 @@ export function getSessionMessages(id: string): Promise<SessionMessagesResponse>
 // ---------------------------------------------------------------------------
 
 export function getChannels(): Promise<ChannelDetail[]> {
-  return apiFetch<ChannelDetail[] | { channels: ChannelDetail[] }>('/api/channels').then((data) =>
-    unwrapField(data, 'channels'),
-  );
+  return apiFetch<ChannelDetail[] | { channels: ChannelDetail[] }>('/api/channels')
+    .then((data) => unwrapField(data, 'channels'))
+    .catch(() => {
+      // Fallback: /api/channels may not exist, extract from /api/status
+      return getStatus().then((status) => {
+        if (status.channels && typeof status.channels === 'object') {
+          return Object.entries(status.channels).map(([name, info]: [string, any]) => ({
+            name,
+            enabled: info?.enabled ?? true,
+            health: info?.status ?? 'unknown',
+            last_message_at: null,
+            message_count: 0,
+            ...info,
+          })) as ChannelDetail[];
+        }
+        return [];
+      }).catch(() => []);
+    });
 }
 
 // ---------------------------------------------------------------------------
