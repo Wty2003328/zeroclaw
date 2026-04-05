@@ -32,42 +32,42 @@ export default function ConfigFormView({ config, onUpdate }: ConfigFormViewProps
   const sectionRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [activeSection, setActiveSection] = useState('general');
+  const clickLockRef = useRef(false);
 
   const scrollTo = useCallback((key: string) => {
     sectionRefs.current[key]?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     setActiveSection(key);
+    // Suppress scroll-based updates while smooth-scroll from click is in progress
+    clickLockRef.current = true;
+    setTimeout(() => { clickLockRef.current = false; }, 1000);
   }, []);
 
   const setRef = useCallback((key: string) => (el: HTMLDivElement | null) => {
     sectionRefs.current[key] = el;
   }, []);
 
-  // Track which section is visible via IntersectionObserver
+  // Track which section is visible via scroll position
   useEffect(() => {
     const container = scrollContainerRef.current;
     if (!container) return;
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          if (entry.isIntersecting && entry.intersectionRatio > 0.3) {
-            const key = entry.target.getAttribute('data-section');
-            if (key) setActiveSection(key);
-          }
-        }
-      },
-      { root: container, threshold: 0.3 }
-    );
-
-    for (const [key, el] of Object.entries(sectionRefs.current)) {
-      if (el) {
-        el.setAttribute('data-section', key);
-        observer.observe(el);
+    const onScroll = () => {
+      if (clickLockRef.current) return;
+      const containerTop = container.getBoundingClientRect().top;
+      let best: string | null = null;
+      let bestDist = Infinity;
+      for (const key of NAV_ITEMS.map(n => n.key)) {
+        const el = sectionRefs.current[key];
+        if (!el) continue;
+        const dist = Math.abs(el.getBoundingClientRect().top - containerTop);
+        if (dist < bestDist) { bestDist = dist; best = key; }
       }
-    }
+      if (best) setActiveSection(best);
+    };
 
-    return () => observer.disconnect();
-  }, [config]); // re-observe when config loads
+    container.addEventListener('scroll', onScroll, { passive: true });
+    return () => container.removeEventListener('scroll', onScroll);
+  }, [config]);
 
   return (
     <div className="flex flex-1 min-h-0 gap-4 overflow-hidden">
@@ -80,22 +80,10 @@ export default function ConfigFormView({ config, onUpdate }: ConfigFormViewProps
               key={key}
               type="button"
               onClick={() => scrollTo(key)}
-              className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium transition-colors text-left outline-none"
+              className={`flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium transition-colors text-left outline-none ${!isActive ? 'config-nav-hover' : ''}`}
               style={{
                 color: isActive ? 'var(--pc-accent-light)' : 'var(--pc-text-secondary)',
                 background: isActive ? 'var(--pc-accent-glow)' : 'transparent',
-              }}
-              onMouseEnter={(e) => {
-                if (!isActive) {
-                  e.currentTarget.style.background = 'var(--pc-bg-elevated)';
-                  e.currentTarget.style.color = 'var(--pc-text-primary)';
-                }
-              }}
-              onMouseLeave={(e) => {
-                if (!isActive) {
-                  e.currentTarget.style.background = 'transparent';
-                  e.currentTarget.style.color = 'var(--pc-text-secondary)';
-                }
               }}
             >
               <Icon className="h-4 w-4" style={{ color: isActive ? 'var(--pc-accent)' : 'var(--pc-accent-dim)' }} />

@@ -193,13 +193,11 @@ export function SettingsModal({ open, onClose }: Props) {
               <button
                 key={tTab.id}
                 onClick={() => setTab(tTab.id)}
-                className="flex-1 rounded-xl border px-3 py-2 text-xs font-medium transition-colors flex items-center justify-center gap-1.5"
+                className={`flex-1 rounded-xl border px-3 py-2 text-xs font-medium transition-colors flex items-center justify-center gap-1.5 ${tab !== tTab.id ? 'settings-btn-hover' : ''}`}
                 style={tab === tTab.id
                   ? { borderColor: 'var(--pc-accent-dim)', background: 'var(--pc-accent-glow)', color: 'var(--pc-accent-light)' }
                   : { borderColor: 'var(--pc-border)', color: 'var(--pc-text-muted)', background: 'transparent' }
                 }
-                onMouseEnter={(e) => { if (tab !== tTab.id) e.currentTarget.style.background = 'var(--pc-hover)'; }}
-                onMouseLeave={(e) => { if (tab !== tTab.id) e.currentTarget.style.background = 'transparent'; }}
               >
                 <tTab.icon size={13} />
                 {tTab.label}
@@ -224,13 +222,11 @@ export function SettingsModal({ open, onClose }: Props) {
                         key={opt.value}
                         onClick={() => setTheme(opt.value)}
                         aria-pressed={active}
-                        className="flex-1 flex flex-col items-center gap-1 py-2 rounded-xl border text-xs transition-all"
+                        className={`flex-1 flex flex-col items-center gap-1 py-2 rounded-xl border text-xs transition-all ${active ? '' : 'settings-btn-hover'}`}
                         style={active
                           ? { borderColor: 'var(--pc-accent-dim)', background: 'var(--pc-accent-glow)', color: 'var(--pc-accent-light)' }
                           : { borderColor: 'var(--pc-border)', color: 'var(--pc-text-muted)', background: 'transparent' }
                         }
-                        onMouseEnter={(e) => { if (!active) e.currentTarget.style.background = 'var(--pc-hover)'; }}
-                        onMouseLeave={(e) => { if (!active) e.currentTarget.style.background = 'transparent'; }}
                       >
                         <Icon size={16} />
                         <span>{t(opt.labelKey)}</span>
@@ -329,13 +325,11 @@ export function SettingsModal({ open, onClose }: Props) {
                     <button
                       key={opt.value}
                       onClick={() => setUiFont(opt.value)}
-                      className="flex items-center gap-2 px-3 py-2 rounded-xl border text-xs transition-all"
+                      className={`flex items-center gap-2 px-3 py-2 rounded-xl border text-xs transition-all ${uiFont !== opt.value ? 'settings-btn-hover' : ''}`}
                       style={uiFont === opt.value
                         ? { borderColor: 'var(--pc-accent-dim)', background: 'var(--pc-accent-glow)', color: 'var(--pc-accent-light)' }
                         : { borderColor: 'var(--pc-border)', color: 'var(--pc-text-muted)', background: 'transparent' }
                       }
-                      onMouseEnter={(e) => { if (uiFont !== opt.value) e.currentTarget.style.background = 'var(--pc-hover)'; }}
-                      onMouseLeave={(e) => { if (uiFont !== opt.value) e.currentTarget.style.background = 'transparent'; }}
                     >
                       <span style={{ fontSize: '14px', fontFamily: uiFontStacks[opt.value] }}>{opt.sample}</span>
                       <span style={{ fontSize: '11px', color: 'var(--pc-text-faint)' }}>{opt.label}</span>
@@ -355,13 +349,11 @@ export function SettingsModal({ open, onClose }: Props) {
                     <button
                       key={opt.value}
                       onClick={() => setMonoFont(opt.value)}
-                      className="flex items-center gap-2 px-3 py-2 rounded-xl border text-xs transition-all"
+                      className={`flex items-center gap-2 px-3 py-2 rounded-xl border text-xs transition-all ${monoFont !== opt.value ? 'settings-btn-hover' : ''}`}
                       style={monoFont === opt.value
                         ? { borderColor: 'var(--pc-accent-dim)', background: 'var(--pc-accent-glow)', color: 'var(--pc-accent-light)' }
                         : { borderColor: 'var(--pc-border)', color: 'var(--pc-text-muted)', background: 'transparent' }
                       }
-                      onMouseEnter={(e) => { if (monoFont !== opt.value) e.currentTarget.style.background = 'var(--pc-hover)'; }}
-                      onMouseLeave={(e) => { if (monoFont !== opt.value) e.currentTarget.style.background = 'transparent'; }}
                     >
                       <span style={{ fontSize: '14px', fontFamily: monoFontStacks[opt.value] }}>{opt.sample}</span>
                       <span style={{ fontSize: '11px', color: 'var(--pc-text-faint)' }}>{opt.label}</span>
@@ -378,13 +370,11 @@ export function SettingsModal({ open, onClose }: Props) {
                     <button
                       key={size}
                       onClick={() => setUiFontSize(size)}
-                      className="px-3 py-1.5 rounded-lg border text-xs transition-all"
+                      className={`px-3 py-1.5 rounded-lg border text-xs transition-all ${uiFontSize !== size ? 'settings-btn-hover' : ''}`}
                       style={uiFontSize === size
                         ? { borderColor: 'var(--pc-accent-dim)', background: 'var(--pc-accent-glow)', color: 'var(--pc-accent-light)' }
                         : { borderColor: 'var(--pc-border)', color: 'var(--pc-text-muted)', background: 'transparent' }
                       }
-                      onMouseEnter={(e) => { if (uiFontSize !== size) e.currentTarget.style.background = 'var(--pc-hover)'; }}
-                      onMouseLeave={(e) => { if (uiFontSize !== size) e.currentTarget.style.background = 'transparent'; }}
                     >
                       {size}px
                     </button>
@@ -400,13 +390,11 @@ export function SettingsModal({ open, onClose }: Props) {
                     <button
                       key={size}
                       onClick={() => setMonoFontSize(size)}
-                      className="px-3 py-1.5 rounded-lg border text-xs transition-all"
+                      className={`px-3 py-1.5 rounded-lg border text-xs transition-all ${monoFontSize !== size ? 'settings-btn-hover' : ''}`}
                       style={monoFontSize === size
                         ? { borderColor: 'var(--pc-accent-dim)', background: 'var(--pc-accent-glow)', color: 'var(--pc-accent-light)' }
                         : { borderColor: 'var(--pc-border)', color: 'var(--pc-text-muted)', background: 'transparent' }
                       }
-                      onMouseEnter={(e) => { if (monoFontSize !== size) e.currentTarget.style.background = 'var(--pc-hover)'; }}
-                      onMouseLeave={(e) => { if (monoFontSize !== size) e.currentTarget.style.background = 'transparent'; }}
                     >
                       {size}px
                     </button>

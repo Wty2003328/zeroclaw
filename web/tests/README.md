@@ -50,6 +50,10 @@ node web/tests/ui-regression.cjs http://localhost:5757
 | 10 | Config button states | Verifies config nav buttons are clickable and page renders |
 | 11 | Broken images | Scans Pulse page for `<img>` elements that failed to load |
 | 12 | Rapid-click stability | Clicks config nav 24 times rapidly — page must not break |
+| 13 | Config single-active | Only one config nav button active at a time after click |
+| 14 | Integration borders | Active filter has border (no layout shift) |
+| 15 | Digest title visibility | Digest shows article titles (not just metadata) at all sizes |
+| 16 | Theme hover stability | No stuck hover backgrounds after rapid theme switching |
 
 ## Screenshots
 

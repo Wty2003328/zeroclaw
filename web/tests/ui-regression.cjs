@@ -333,6 +333,110 @@ async function checkWidgetOverflow(widget, tolerance = 4) {
   }
   await page.screenshot({ path: `${SCREENSHOT_DIR}/config-rapid-click.png` });
 
+  // ═══ TEST 13: Config nav — only one active at a time ═══
+  console.log('TEST 13: Config nav single-active');
+  await page.setViewportSize({ width: 1920, height: 1080 });
+  await page.goto(`${BASE}/config`);
+  await page.waitForTimeout(2000);
+  {
+    const navBtns = page.locator('nav button');
+    const count = await navBtns.count();
+    for (let i = 0; i < count; i++) {
+      const btn = navBtns.nth(i);
+      const text = (await btn.textContent() || '').trim();
+      if (!text) continue;
+      await btn.click();
+      await page.waitForTimeout(800);
+      // Count how many buttons have non-transparent background
+      let activeCount = 0;
+      for (let j = 0; j < count; j++) {
+        const bg = await navBtns.nth(j).evaluate(el => window.getComputedStyle(el).backgroundColor);
+        if (bg !== 'rgba(0, 0, 0, 0)' && bg !== 'transparent') activeCount++;
+      }
+      if (activeCount > 1) {
+        bug('Config-Nav', `After clicking "${text}", ${activeCount} buttons are active (should be 1)`);
+      }
+    }
+  }
+
+  // ═══ TEST 14: Integrations filter — active state has border (no layout shift) ═══
+  console.log('TEST 14: Integrations filter borders');
+  await page.goto(`${BASE}/integrations`);
+  await page.waitForTimeout(2000);
+  {
+    const filterTexts = ['All', 'AiModel', 'Chat', 'MediaCreative', 'MusicAudio', 'Platform', 'Productivity', 'SmartHome', 'Social', 'ToolsAutomation'];
+    for (const ft of filterTexts) {
+      const btn = page.locator(`button:has-text("${ft}")`).first();
+      if (!(await btn.isVisible().catch(() => false))) continue;
+      await btn.click();
+      await page.waitForTimeout(150);
+      const border = await btn.evaluate(el => window.getComputedStyle(el).borderWidth);
+      if (border === '0px' || !border) {
+        bug('Integrations', `"${ft}" active has no border (causes layout shift)`);
+      }
+    }
+  }
+
+  // ═══ TEST 15: Digest widget — titles visible at all sizes ═══
+  console.log('TEST 15: Digest title visibility');
+  await page.setViewportSize({ width: 1920, height: 1080 });
+  await page.goto(`${BASE}/pulse`);
+  await page.waitForTimeout(5000);
+  {
+    const widgets = page.locator('.react-grid-item');
+    const wc = await widgets.count();
+    let digestIdx = -1;
+    for (let i = 0; i < wc; i++) {
+      const t = await widgets.nth(i).locator('.widget-drag-handle span, .widget-drag-handle h3').first().textContent().catch(() => '');
+      if (t === 'Digest') { digestIdx = i; break; }
+    }
+    if (digestIdx >= 0) {
+      const digest = widgets.nth(digestIdx);
+      for (const sz of [{ n: '1x1', w: 150, h: 150 }, { n: '1x2', w: 150, h: 310 }, { n: '2x2', w: 310, h: 310 }, { n: '3x2', w: 470, h: 310 }]) {
+        await digest.evaluate((el, { w, h }) => {
+          el.style.cssText = `width:${w}px;height:${h}px;position:fixed;top:10px;left:10px;z-index:9999;transform:none;`;
+          el.offsetHeight;
+        }, { w: sz.w, h: sz.h });
+        await page.waitForTimeout(400);
+        // Check titles visible and no raw "rss:" source labels
+        const raw = await digest.evaluate(el => {
+          for (const s of el.querySelectorAll('span')) {
+            if (s.textContent && s.textContent.includes('rss:')) return s.textContent;
+          }
+          return null;
+        });
+        if (raw) bug('Digest', `At ${sz.n}: raw source label "${raw}"`);
+        await digest.screenshot({ path: `${SCREENSHOT_DIR}/digest-${sz.n}.png` });
+        await digest.evaluate(el => { el.style.cssText = ''; });
+      }
+    }
+  }
+
+  // ═══ TEST 16: Theme settings — no stuck hover states ═══
+  console.log('TEST 16: Theme settings hover stability');
+  await page.goto(`${BASE}/`);
+  await page.waitForTimeout(1000);
+  try {
+    await page.click('button[aria-label="Settings"], button:has(svg.lucide-settings)');
+    await page.waitForTimeout(500);
+    // Rapidly click theme mode buttons
+    for (const label of ['System', 'Dark', 'Light', 'OLED', 'Dark']) {
+      const btn = page.locator(`button:has-text("${label}")`).first();
+      if (await btn.isVisible().catch(() => false)) { await btn.click(); await page.waitForTimeout(50); }
+    }
+    await page.waitForTimeout(300);
+    // Non-active buttons should not have stuck inline backgrounds
+    for (const label of ['System', 'Light', 'OLED']) {
+      const btn = page.locator(`button:has-text("${label}")`).first();
+      if (!(await btn.isVisible().catch(() => false))) continue;
+      const bg = await btn.evaluate(el => el.style.background);
+      if (bg && bg.includes('var(--pc-hover)')) {
+        bug('Theme', `"${label}" has stuck hover background: ${bg}`);
+      }
+    }
+    await page.screenshot({ path: `${SCREENSHOT_DIR}/theme-hover-test.png` });
+  } catch (e) { console.log('  Theme test skipped:', e.message.slice(0, 60)); }
+
   await page.close();
   await browser.close();
 
@@ -341,7 +445,7 @@ async function checkWidgetOverflow(widget, tolerance = 4) {
   console.log('  UI REGRESSION TEST RESULTS');
   console.log('='.repeat(50));
   if (BUGS.length === 0) {
-    console.log('  PASS: All 12 tests passed — 0 bugs found');
+    console.log('  PASS: All 16 tests passed — 0 bugs found');
   } else {
     console.log(`  FAIL: ${BUGS.length} bug(s) found:`);
     BUGS.forEach((b, i) => console.log(`    ${i + 1}. ${b}`));

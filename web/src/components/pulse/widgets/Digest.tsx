@@ -10,6 +10,12 @@ function stripHtml(html: string): string {
   return doc.body.textContent || '';
 }
 
+function sourceLabel(source: string): string {
+  let label = source;
+  if (label.startsWith('rss:')) label = label.slice(4);
+  return label.replace(/[-_]/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
+}
+
 function DigestItem({ item }: { item: FeedItem }) {
   const [expanded, setExpanded] = useState(false);
   const score = item.score != null ? Math.round(item.score * 10) / 10 : 0;
@@ -18,15 +24,15 @@ function DigestItem({ item }: { item: FeedItem }) {
 
   return (
     <div className="relative rounded-md border-l-[3px] border-l-primary transition-colors hover:bg-accent/40 overflow-hidden">
-      <div className="p-2 cursor-pointer" onClick={() => hasContent && setExpanded(!expanded)}>
+      <div className="px-1.5 py-1 cursor-pointer overflow-hidden" onClick={() => hasContent && setExpanded(!expanded)}>
         <div className="absolute top-0 left-0 h-full z-0" style={{ width: `${scorePercent}%`, background: 'linear-gradient(90deg, rgba(108,140,255,0.1), transparent)' }} />
-        <div className="relative z-10">
-          <div className="flex items-center gap-1.5 mb-0.5 text-xs">
-            <span className="font-bold text-primary">{score}</span>
-            <span className="text-primary bg-primary/10 px-1 py-0.5 rounded font-medium">{item.source}</span>
-            <span className="text-muted-foreground">{item.published_at ? timeAgo(item.published_at) : timeAgo(item.collected_at)}</span>
+        <div className="relative z-10 overflow-hidden">
+          <h4 className="cq-text-sm font-medium leading-tight overflow-hidden" style={{ display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' as const }}>{item.title}</h4>
+          <div className="flex items-center gap-1.5 mt-0.5 overflow-hidden" style={{ fontSize: '10px' }}>
+            <span className="font-bold text-primary shrink-0">{score}</span>
+            <span className="text-primary shrink-0 truncate max-w-[35%]">{sourceLabel(item.source)}</span>
+            <span className="text-muted-foreground shrink-0">{item.published_at ? timeAgo(item.published_at) : timeAgo(item.collected_at)}</span>
           </div>
-          <h4 className="cq-text-base font-medium leading-snug pl-2 overflow-hidden" style={{ display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical' as const }}>{item.title}</h4>
         </div>
       </div>
       {expanded && (

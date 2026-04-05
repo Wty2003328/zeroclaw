@@ -772,3 +772,12 @@ code, kbd, pre {
 
 /* Remove default browser focus outlines — ZeroClaw uses custom focus states */
 /* (focus rules consolidated above) */
+
+/* Hover states via CSS classes — avoids stuck inline styles from onMouseEnter/Leave */
+.settings-btn-hover:hover {
+  background: var(--pc-hover) !important;
+}
+.config-nav-hover:hover {
+  background: var(--pc-bg-elevated) !important;
+  color: var(--pc-text-primary) !important;
+}
