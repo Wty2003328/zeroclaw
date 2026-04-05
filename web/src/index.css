@@ -92,14 +92,12 @@ body {
   min-height: 100vh;
 }
 
-/* Focus ring */
-:focus-visible {
-  outline: 2px solid var(--pc-accent-dim);
-  outline-offset: 2px;
-}
-
-:focus:not(:focus-visible) {
-  outline: none;
+/* Focus: no visible outlines on any element, ever.
+   Accessibility note: we rely on hover/active states for visual feedback. */
+*, *:focus, *:focus-visible, *:focus-within {
+  outline: 0 !important;
+  outline-width: 0 !important;
+  outline-style: none !important;
 }
 
 /* Scrollbar */
@@ -773,13 +771,4 @@ code, kbd, pre {
 }
 
 /* Remove default browser focus outlines — ZeroClaw uses custom focus states */
-/* Global: suppress all default focus indicators on mouse click */
-*:focus:not(:focus-visible) {
-  outline: none !important;
-  box-shadow: none !important;
-}
-/* Keyboard navigation only: subtle accent outline */
-*:focus-visible {
-  outline: 1px solid var(--pc-accent-dim) !important;
-  outline-offset: 2px;
-}
+/* (focus rules consolidated above) */

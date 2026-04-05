@@ -26,7 +26,7 @@ function DigestItem({ item }: { item: FeedItem }) {
             <span className="text-primary bg-primary/10 px-1 py-0.5 rounded font-medium">{item.source}</span>
             <span className="text-muted-foreground">{item.published_at ? timeAgo(item.published_at) : timeAgo(item.collected_at)}</span>
           </div>
-          <h4 className="cq-text-base font-medium leading-snug pl-2">{item.title}</h4>
+          <h4 className="cq-text-base font-medium leading-snug pl-2 overflow-hidden" style={{ display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical' as const }}>{item.title}</h4>
         </div>
       </div>
       {expanded && (

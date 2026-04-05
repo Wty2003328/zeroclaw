@@ -22,14 +22,14 @@ function FeedItemRow({ item }: { item: FeedItem }) {
   const hasContent = !!(item.content || item.summary || item.url);
 
   return (
-    <div className="rounded-lg transition-colors hover:bg-accent/40">
-      <div className="px-2.5 py-1.5 cursor-pointer" onClick={() => hasContent && setExpanded(!expanded)}>
-        <div className="flex items-center gap-2 mb-0.5">
-          <span className="cq-text-sm font-semibold text-primary bg-primary/10 px-1.5 py-0.5 rounded">{sourceLabel(item.source)}</span>
-          <span className="cq-text-xs text-muted-foreground">{item.published_at ? timeAgo(item.published_at) : timeAgo(item.collected_at)}</span>
+    <div className="rounded-lg transition-colors hover:bg-accent/40 overflow-hidden">
+      <div className="px-2.5 py-1.5 cursor-pointer overflow-hidden" onClick={() => hasContent && setExpanded(!expanded)}>
+        <div className="flex items-center gap-2 mb-0.5 overflow-hidden">
+          <span className="cq-text-sm font-semibold text-primary bg-primary/10 px-1.5 py-0.5 rounded shrink-0 truncate max-w-[40%]">{sourceLabel(item.source)}</span>
+          <span className="cq-text-xs text-muted-foreground shrink-0">{item.published_at ? timeAgo(item.published_at) : timeAgo(item.collected_at)}</span>
           {hasContent && <span className="ml-auto">{expanded ? <ChevronUp className="w-3 h-3 text-muted-foreground"/> : <ChevronDown className="w-3 h-3 text-muted-foreground"/>}</span>}
         </div>
-        <h3 className="cq-text-base font-medium leading-snug pl-2">{item.title}</h3>
+        <h3 className="cq-text-base font-medium leading-snug pl-2 overflow-hidden" style={{ display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical' as const }}>{item.title}</h3>
       </div>
       {expanded && (
         <div className="pl-5 pr-2.5 pb-2 border-t border-border/40 pt-1.5 space-y-1.5">
