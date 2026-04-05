@@ -123,7 +123,7 @@ export function useConfigState() {
         toml = rawToml;
       }
       await putConfig(toml);
-      setSuccess('Configuration saved successfully');
+      setSuccess('Configuration saved — restart gateway to apply changes');
       setDirty(false);
       // Re-sync both representations
       if (mode === 'form') {

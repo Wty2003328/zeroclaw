@@ -773,11 +773,13 @@ code, kbd, pre {
 }
 
 /* Remove default browser focus outlines — ZeroClaw uses custom focus states */
-button:focus, a:focus, [role="button"]:focus, input:focus, select:focus, textarea:focus {
-  outline: none;
+/* Global: suppress all default focus indicators on mouse click */
+*:focus:not(:focus-visible) {
+  outline: none !important;
+  box-shadow: none !important;
 }
-button:focus-visible, a:focus-visible {
-  outline: 1px solid var(--pc-accent-dim, rgba(34,211,238,0.3));
-  outline-offset: 1px;
-  border-radius: 8px;
+/* Keyboard navigation only: subtle accent outline */
+*:focus-visible {
+  outline: 1px solid var(--pc-accent-dim) !important;
+  outline-offset: 2px;
 }

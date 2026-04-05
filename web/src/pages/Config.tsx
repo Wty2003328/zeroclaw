@@ -74,7 +74,7 @@ export default function Config() {
           </div>
 
           <button onClick={save} disabled={saving} className="btn-electric flex items-center gap-2 text-sm px-4 py-2">
-            <Save className="h-4 w-4" />{saving ? t('config.saving') : t('config.save')}
+            <Save className="h-4 w-4" />{saving ? 'Saving...' : 'Save & Apply'}
           </button>
         </div>
       </div>

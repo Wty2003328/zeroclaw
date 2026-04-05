@@ -51,8 +51,21 @@ export default function Digest({ }: Props) {
 
   return (
     <div className="flex flex-col overflow-hidden h-full">
-      <div className="flex-1 overflow-y-auto flex flex-col gap-1">
-        {data.items.map((item) => <DigestItem key={item.id} item={item} />)}
+      {/* Tiny: plain titles */}
+      <div className="@[200px]:hidden flex-1 overflow-y-auto">
+        {data.items.map((item) => (
+          <div key={item.id} className="py-0.5 truncate cq-text-xs cursor-pointer hover:text-[var(--pc-accent)]"
+            style={{ color: 'var(--pc-text-primary)' }}
+            onClick={() => item.url && window.open(item.url, '_blank')}>
+            {item.title}
+          </div>
+        ))}
+      </div>
+      {/* Normal: full items */}
+      <div className="hidden @[200px]:flex flex-col overflow-hidden h-full">
+        <div className="flex-1 overflow-y-auto flex flex-col gap-1">
+          {data.items.map((item) => <DigestItem key={item.id} item={item} />)}
+        </div>
       </div>
     </div>
   );

@@ -1,6 +1,6 @@
 import { useRef, useCallback, useState, useEffect } from 'react';
 import {
-  Zap, Bot, Server, DollarSign, Brain, Search, HeartPulse,
+  Zap, Bot, Server, DollarSign, Brain, Search, HeartPulse, Gauge,
 } from 'lucide-react';
 import GeneralSection from './sections/GeneralSection';
 import AgentSection from './sections/AgentSection';
@@ -9,6 +9,7 @@ import CostSection from './sections/CostSection';
 import MemorySection from './sections/MemorySection';
 import WebSearchSection from './sections/WebSearchSection';
 import HeartbeatSection from './sections/HeartbeatSection';
+import PulseConfigSection from './sections/PulseSection';
 import { t } from '@/lib/i18n';
 
 interface ConfigFormViewProps {
@@ -24,6 +25,7 @@ const NAV_ITEMS = [
   { key: 'cost', icon: DollarSign, label: () => t('config.section.cost') },
   { key: 'agent', icon: Bot, label: () => t('config.section.agent') },
   { key: 'gateway', icon: Server, label: () => t('config.section.gateway') },
+  { key: 'pulse', icon: Gauge, label: () => 'Pulse Dashboard' },
 ];
 
 export default function ConfigFormView({ config, onUpdate }: ConfigFormViewProps) {
@@ -125,6 +127,9 @@ export default function ConfigFormView({ config, onUpdate }: ConfigFormViewProps
         </div>
         <div ref={setRef('gateway')}>
           <GatewaySection config={config} onUpdate={onUpdate} />
+        </div>
+        <div ref={setRef('pulse')}>
+          <PulseConfigSection />
         </div>
       </div>
     </div>
