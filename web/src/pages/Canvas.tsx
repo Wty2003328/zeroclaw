@@ -248,7 +248,7 @@ export default function Canvas() {
         {/* Canvas viewer */}
         <div
           className="flex-1 rounded-lg border overflow-hidden"
-          style={{ borderColor: 'var(--pc-border)', background: '#1a1a2e' }}
+          style={{ borderColor: 'var(--pc-border)', background: 'var(--pc-bg-surface)' }}
         >
           {currentFrame ? (
             <iframe

@@ -132,11 +132,18 @@ function migrateThemeToColorTheme(themeMode: ThemeMode): ColorThemeId {
   }
 }
 
+const THEME_VERSION = 2; // Bump to reset all users to new defaults
+
 function loadStored(): StoredTheme {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (raw) {
       const parsed = JSON.parse(raw);
+      // If version doesn't match, reset to defaults (new theme)
+      if (parsed._v !== THEME_VERSION) {
+        localStorage.removeItem(STORAGE_KEY);
+        return DEFAULTS;
+      }
       const themeValid = validThemes.includes(parsed.theme);
       const accentValid = validAccents.includes(parsed.accent);
       const uiFont: UiFont = uiFontStacks[parsed.uiFont as UiFont] ? parsed.uiFont as UiFont : DEFAULTS.uiFont;
@@ -239,7 +246,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   const [monoFontSize, setMonoFontSizeState] = useState<number>(stored.monoFontSize);
 
   const persist = useCallback((s: StoredTheme) => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(s));
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ ...s, _v: THEME_VERSION }));
   }, []);
 
   const applyAll = useCallback((s: StoredTheme) => {
