@@ -92,13 +92,8 @@ export default function Integrations() {
           <button
             key={cat}
             onClick={() => setActiveCategory(cat)}
-            className="px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all capitalize"
-            style={activeCategory === cat
-              ? { background: 'var(--pc-accent)', color: 'white', border: '1px solid var(--pc-accent)' }
-              : { color: 'var(--pc-text-muted)', border: '1px solid var(--pc-border)', background: 'transparent' }
-            }
-            onMouseEnter={(e) => { if (activeCategory !== cat) e.currentTarget.style.background = 'var(--pc-hover)'; }}
-            onMouseLeave={(e) => { if (activeCategory !== cat) e.currentTarget.style.background = 'transparent'; }}
+            className="filter-btn px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all capitalize"
+            data-active={activeCategory === cat ? '' : undefined}
           >
             {cat}
           </button>

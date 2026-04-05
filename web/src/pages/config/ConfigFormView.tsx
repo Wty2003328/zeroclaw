@@ -80,13 +80,10 @@ export default function ConfigFormView({ config, onUpdate }: ConfigFormViewProps
               key={key}
               type="button"
               onClick={() => scrollTo(key)}
-              className={`flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium transition-colors text-left outline-none ${!isActive ? 'config-nav-hover' : ''}`}
-              style={{
-                color: isActive ? 'var(--pc-accent-light)' : 'var(--pc-text-secondary)',
-                background: isActive ? 'var(--pc-accent-glow)' : 'transparent',
-              }}
+              className="config-nav-btn flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium transition-colors text-left outline-none"
+              data-active={isActive ? '' : undefined}
             >
-              <Icon className="h-4 w-4" style={{ color: isActive ? 'var(--pc-accent)' : 'var(--pc-accent-dim)' }} />
+              <Icon className="config-nav-icon h-4 w-4" />
               {label()}
             </button>
           );

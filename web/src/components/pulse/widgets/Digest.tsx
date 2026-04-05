@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useWidgetData } from '../../../hooks/useWidgetData';
 import { timeAgo } from '../../../lib/time';
 import { ExternalLink } from 'lucide-react';
@@ -48,15 +48,46 @@ function DigestItem({ item }: { item: FeedItem }) {
 
 interface Props { dims?: WidgetDimensions }
 
-export default function Digest({ }: Props) {
+export default function Digest({ dims }: Props) {
   const { data, loading, error } = useWidgetData<FeedResponse>('/api/pulse/feed/digest?limit=10', 120000);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [containerHeight, setContainerHeight] = useState(0);
+
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const ro = new ResizeObserver((entries) => {
+      for (const entry of entries) setContainerHeight(entry.contentRect.height);
+    });
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+
+  const isShortRow = (dims ? dims.h <= 1 : false) || containerHeight < 200;
 
   if (loading) return <div className="flex-1 flex items-center justify-center text-muted-foreground text-sm">Loading...</div>;
   if (error) return <div className="flex-1 flex items-center justify-center text-destructive text-sm">Error</div>;
   if (!data || data.items.length === 0) return <div className="flex-1 flex items-center justify-center text-muted-foreground text-sm">No digest yet</div>;
 
+  // For 1-row height, always use compact title-only layout
+  if (isShortRow) {
+    return (
+      <div ref={containerRef} className="flex flex-col overflow-hidden h-full">
+        <div className="flex-1 overflow-y-auto">
+          {data.items.map((item) => (
+            <div key={item.id} className="py-0.5 truncate text-xs cursor-pointer hover:text-[var(--pc-accent)]"
+              style={{ color: 'var(--pc-text-primary)' }}
+              onClick={() => item.url && window.open(item.url, '_blank')}>
+              {item.title}
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="flex flex-col overflow-hidden h-full">
+    <div ref={containerRef} className="flex flex-col overflow-hidden h-full">
       {/* Tiny: plain titles */}
       <div className="@[200px]:hidden flex-1 overflow-y-auto">
         {data.items.map((item) => (

@@ -773,11 +773,54 @@ code, kbd, pre {
 /* Remove default browser focus outlines — ZeroClaw uses custom focus states */
 /* (focus rules consolidated above) */
 
-/* Hover states via CSS classes — avoids stuck inline styles from onMouseEnter/Leave */
-.settings-btn-hover:hover {
-  background: var(--pc-hover) !important;
+/* ── Button active/hover states (pure CSS, no inline styles) ── */
+
+/* Integration filter buttons */
+.filter-btn {
+  color: var(--pc-text-muted);
+  border: 1px solid var(--pc-border);
+  background: transparent;
 }
-.config-nav-hover:hover {
-  background: var(--pc-bg-elevated) !important;
-  color: var(--pc-text-primary) !important;
+.filter-btn[data-active] {
+  background: var(--pc-accent);
+  color: white;
+  border-color: var(--pc-accent);
+}
+.filter-btn:not([data-active]):hover {
+  background: var(--pc-hover);
+}
+
+/* Config nav buttons */
+.config-nav-btn {
+  color: var(--pc-text-secondary);
+  background: transparent;
+}
+.config-nav-btn[data-active] {
+  color: var(--pc-accent-light);
+  background: var(--pc-accent-glow);
+}
+.config-nav-btn[data-active] .config-nav-icon {
+  color: var(--pc-accent);
+}
+.config-nav-btn:not([data-active]) .config-nav-icon {
+  color: var(--pc-accent-dim);
+}
+.config-nav-btn:not([data-active]):hover {
+  background: var(--pc-bg-elevated);
+  color: var(--pc-text-primary);
+}
+
+/* Settings modal buttons */
+.settings-btn {
+  border-color: var(--pc-border);
+  color: var(--pc-text-muted);
+  background: transparent;
+}
+.settings-btn[data-active] {
+  border-color: var(--pc-accent-dim);
+  background: var(--pc-accent-glow);
+  color: var(--pc-accent-light);
+}
+.settings-btn:not([data-active]):hover {
+  background: var(--pc-hover);
 }
