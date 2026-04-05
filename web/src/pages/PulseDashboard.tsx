@@ -1,7 +1,5 @@
 import { useState, useMemo, useEffect, useRef, useCallback } from 'react';
-import { Link } from 'react-router-dom';
 import GridLayout from 'react-grid-layout';
-import { Settings as SettingsIcon, GripHorizontal } from 'lucide-react';
 import NewsFeed from '../components/pulse/widgets/NewsFeed';
 import CollectorStatus from '../components/pulse/widgets/CollectorStatus';
 import StockTicker from '../components/pulse/widgets/StockTicker';
@@ -12,6 +10,7 @@ import SystemMonitor from '../components/pulse/widgets/SystemMonitor';
 import Calendar from '../components/pulse/widgets/Calendar';
 import ZeroClawAgent from '../components/pulse/widgets/ZeroClawAgent';
 import Videos from '../components/pulse/widgets/Videos';
+import { GripHorizontal } from 'lucide-react';
 import { getWidgetSize, getOrientation } from '../lib/widget-size';
 
 const COLS = 12;
@@ -40,10 +39,10 @@ function loadLayout(): any[] {
 
 function WidgetShell({ children, title }: { children: React.ReactNode; title: string }) {
   return (
-    <div className="rounded-xl border border-border bg-card shadow-sm overflow-hidden flex flex-col h-full">
-      <div className="widget-drag-handle flex items-center gap-1.5 px-3 py-1 border-b border-border/50 cursor-grab active:cursor-grabbing shrink-0 select-none">
-        <GripHorizontal className="w-3.5 h-3.5 text-muted-foreground/40" />
-        <span className="text-[0.6rem] font-semibold text-muted-foreground uppercase tracking-wider">{title}</span>
+    <div className="rounded-xl overflow-hidden flex flex-col h-full shadow-sm" style={{ background: 'var(--pc-bg-surface)', border: '1px solid var(--pc-border)' }}>
+      <div className="widget-drag-handle flex items-center gap-1.5 px-3 py-1 cursor-grab active:cursor-grabbing shrink-0 select-none" style={{ borderBottom: '1px solid var(--pc-border)' }}>
+        <GripHorizontal className="w-3.5 h-3.5" style={{ color: 'var(--pc-text-faint)' }} />
+        <span className="text-[0.6rem] font-semibold uppercase tracking-wider" style={{ color: 'var(--pc-text-muted)' }}>{title}</span>
       </div>
       <div className="widget-container p-2 flex flex-col flex-1 overflow-hidden">
         {children}
@@ -95,22 +94,8 @@ export default function Dashboard() {
   }, [layout, rowHeight]);
 
   return (
-    <div className="min-h-screen flex flex-col bg-background">
-      <header className="flex items-center justify-between px-6 py-3 bg-card border-b border-border shrink-0">
-        <div className="flex items-center gap-3">
-          <h1 className="text-xl font-bold tracking-tight text-foreground">Pulse</h1>
-          <span className="text-xs text-muted-foreground hidden sm:inline">Personal Intelligence Dashboard</span>
-        </div>
-        <Link
-          to="/dashboard/settings"
-          className="flex items-center gap-2 px-3 py-1.5 text-sm text-muted-foreground rounded-md hover:bg-accent hover:text-foreground transition-colors no-underline"
-        >
-          <SettingsIcon className="w-4 h-4" />
-          <span className="hidden sm:inline">Settings</span>
-        </Link>
-      </header>
-
-      <main ref={containerRef} className="flex-1 p-1 overflow-auto">
+    <div className="flex flex-col h-full">
+      <main ref={containerRef} className="flex-1 p-2 overflow-auto">
         {containerWidth > 0 && (
           <GridLayout
             className="w-full"

@@ -89,18 +89,14 @@ export default function Sidebar({ open, onClose }: SidebarProps) {
               onClick={onClose}
               className={({ isActive }) =>
                 [
-                  'flex items-center gap-3 px-3 py-2.5 rounded-2xl text-sm font-medium transition-all group',
+                  'flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all group outline-none focus-visible:outline-none',
                   isActive
-                    ? 'text-[var(--pc-accent-light)]'
+                    ? 'text-[var(--pc-accent-light)] bg-[var(--pc-accent-glow)]'
                     : 'text-[var(--pc-text-muted)] hover:text-[var(--pc-text-secondary)] hover:bg-[var(--pc-hover)]',
                 ].join(' ')
               }
-              style={({ isActive }) => ({
+              style={({ isActive: _isActive }) => ({
                 animationDelay: `${idx * 40}ms`,
-                ...(isActive ? {
-                  background: 'var(--pc-accent-glow)',
-                  border: '1px solid var(--pc-accent-dim)',
-                } : {}),
               })}
             >
               {({ isActive }) => (

@@ -751,3 +751,23 @@ code, kbd, pre {
 .react-grid-item > .react-resizable-handle-ne { top: 0; right: 0; cursor: ne-resize; }
 .react-grid-item > .react-resizable-handle-nw { top: 0; left: 0; cursor: nw-resize; }
 .react-grid-placeholder { background: var(--pc-bg-elevated, #242836); opacity: 0.3; border-radius: 0.5rem; z-index: 2; border: 1px dashed var(--pc-accent, #6c8cff); }
+
+/* Map Pulse Tailwind theme colors to ZeroClaw CSS variables */
+.widget-container {
+  --color-background: var(--pc-bg-base);
+  --color-foreground: var(--pc-text-primary);
+  --color-card: var(--pc-bg-surface);
+  --color-card-foreground: var(--pc-text-primary);
+  --color-muted: var(--pc-bg-elevated);
+  --color-muted-foreground: var(--pc-text-muted);
+  --color-accent: var(--pc-hover);
+  --color-accent-foreground: var(--pc-text-primary);
+  --color-border: var(--pc-border);
+  --color-input: var(--pc-border);
+  --color-primary: var(--pc-accent);
+  --color-primary-foreground: var(--pc-bg-base);
+  --color-destructive: var(--color-status-error, #f87171);
+  --color-success: var(--color-status-success, #4ade80);
+  --color-warning: var(--color-status-warning, #fbbf24);
+  color: var(--pc-text-primary);
+}
