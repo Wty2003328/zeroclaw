@@ -80,3 +80,10 @@ jobs:
             export "${{ matrix.linker_env }}=${{ matrix.linker }}"
           fi
           cargo build --release --locked --features channel-matrix,channel-lark --target ${{ matrix.target }}
+
+      - name: Upload binary artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: zeroclaw-${{ matrix.target }}
+          path: target/${{ matrix.target }}/release/zeroclaw${{ runner.os == 'Windows' && '.exe' || '' }}
+          retention-days: 7
